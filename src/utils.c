@@ -39,11 +39,8 @@ int	error(int err, int type)
 			return (printf("thread join error\n"), 1);
 		else if (type == 3)
 			return (printf("thread died\n"), 1);
-		else if (type == 4){
-			return (printf("done eating\n"), 1);
+		else if (type == 4)
                         exit(0);
-        }
-                        
 		else if (type == 5)
 			return (printf("done sleeping\n"), 1);
 	}
