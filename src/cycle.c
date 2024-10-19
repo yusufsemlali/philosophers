@@ -35,7 +35,7 @@ void	*eat(t_ph *ph)
 	message(ph, "has taken a fork");
 	if (ph->n == 1)
 		return (ft_usleep(ph->die), unlock(ph->fork_r), NULL);
-	lock(ph->fork_l);
+	lock(ph->fork_r);
 	message(ph, "has taken a fork");
 	ph->eating = 1;
 	message(ph, "is eating");

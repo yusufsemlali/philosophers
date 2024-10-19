@@ -32,12 +32,14 @@ int	error(int err, int type, t_state *state)
 	}
 	return (0);
 }
+
 void	ft_write(char *s, int fd)
 {
 	while (*s)
 		write(fd, s++, 1);
 	write(fd, "\n", 1);
 }
+
 void	lock(pthread_mutex_t *mutex)
 {
 	pthread_mutex_lock(mutex);

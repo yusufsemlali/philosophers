@@ -55,9 +55,7 @@ void	init(t_ph *ph, t_state *state)
 		ph[i].start = ft_time();
 		ph[i].last_m = ft_time();
 		ph[i].fork_r = &state->fork[i];
-		ph[i].fork_l = &state->fork[i - 1];
-		if (i == 0)
-			ph[i].fork_l = &state->fork[state->n - 1];
+		ph[i].fork_l = &state->fork[(i +1)% state->n];
 		i++;
 	}
 }

@@ -15,20 +15,27 @@
 int	running(t_state *s)
 {
 	int	finished;
+	int i ;
 
 	finished = 0;
+	i = 0;
 	if (s->meals == -1)
 		return (0);
-	while (s->n--)
+	while (i < s->n)
 	{
-		lock(s->ph[s->n].m);
-		if (s->ph[s->n].meals_i >= s->meals)
+		lock(s->ph[i].m);
+		if (s->ph[i].meals_i >= s->meals)
+		{
+
+		printf("meals are not %i %i", finished, s->n);
 			finished++;
-		unlock(s->ph[s->n].m);
+		}
+		unlock(s->ph[i].m);
 	}
 	if (finished == s->n)
+	{
 		return (lock(s->ph[0].m), s->ph[0].died = 0, unlock(s->ph[0].m), 1);
-	s->n = s->ph[0].meals;
+	}
 	return (0);
 }
 
@@ -45,10 +52,11 @@ void	*observe(void *p)
 	t_state	*s;
 	int		i;
 
-	i = 0;
 	s = (t_state *)p;
 	while (1)
 	{
+
+		i = 0;
 		while (i < s->n)
 		{
 			if (died(&s->ph[i]))
