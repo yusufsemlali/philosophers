@@ -1,92 +1,53 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ysemlali <ysemlali@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/14 23:03:10 by ysemlali          #+#    #+#             */
+/*   Updated: 2024/10/14 23:57:40 by ysemlali         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
-
-int	eating(size_t eat, t_th *p)
+int	ft_isalnum(char *s)
 {
-	long long	start;
-
-	printf("%zu is eating\n", p->f);
-	start = ft_time();
-	while (1)
-		if (error(ft_sleep(start, (long long)eat), 4))
+	while (*s)
+	{
+		if (*s < '0' && *s > '9')
 			return (1);
-}
-
-void	sleeping(size_t sleep, t_th *p)
-{
-	long long	start;
-
-	printf("%zu is sleeping\n", p->f);
-	start = ft_time();
-	while (1)
-		if (error(ft_sleep(start, (long long)sleep), 5))
-			break ;
-}
-
-void	*run(void *th)
-{
-	t_th			*p;
-	pthread_mutex_t	mx;
-	long long		start;
-
-	p = th;
-	while (1)
-	{
-		start = ft_time();
-        sleep(1);
-		if (error((ft_time() - start) > p->t, 3))
-			break ;
-		// pthread_mutex_lock(&mx);
-		// p->t -= eating(p->ph->eat, p);
-		// printf("times left to eat for thread %zu: %zu \n", p->f, p->t);
-		// sleeping(p->ph->sleep, p);
-		// pthread_mutex_unlock(&mx);
+		s++;
 	}
-	return (pthread_mutex_destroy(&mx), NULL);
+	return (0);
 }
 
-void	init(t_philo *ph)
+int	valid(char **av)
 {
-	size_t	n;
-	size_t	i;
-	t_th	th[ph->n];
-
-	n = ph->n;
-	i = 0;
-	if (n <= 200 && n > 0)
-	{
-		while (i < n)
-		{
-			th[i].f = i + 1;
-			th[i].ph = ph;
-			th[i].t = ph->times;
-			if (i == 0)
-			{
-				th[n - 1].f = n - 1;
-				th[i].next = &th[n - 1];
-			}
-			else
-				th[i].next = &th[i - 1];
-			error(pthread_create(&th[i].p, NULL, run, &th[i]), 1);
-			i++;
-		}
-	}
-	while (i-- > 1)
-		error(pthread_join(th[i].p, NULL), 2);
+	if (ft_atoi(av[1]) <= 0 || ft_atoi(av[1]) > MAX_PH || ft_isalnum(av[1]))
+		return (ft_write("number of philosophers is invalid", 2), 1);
+	if (ft_atoi(av[2]) <= 0 || ft_isalnum(av[2]))
+		return (ft_write("time to die is invalid", 2), 1);
+	if (ft_atoi(av[3]) <= 0 || ft_isalnum(av[3]))
+		return (ft_write("time to eat is invalid", 2), 1);
+	if (ft_atoi(av[4]) <= 0 || ft_isalnum(av[4]))
+		return (ft_write("time to sleep is invalid", 2), 1);
+	if (av[5] && (ft_atoi(av[5]) < 0 || ft_isalnum(av[5])))
+		return (ft_write("number of meals is invalid", 2), 1);
+	return (0);
 }
 
 int	main(int ac, char **av)
 {
-	t_philo ph;
-	if (ac < 5 || ac > 6)
-		return (0);
+	t_ph		ph[200];
+	t_state		state;
+	pthread_t	monitor;
 
-	ph.n = ft_atoi(av[1]);
-	ph.die = ft_atoi(av[2]);
-	ph.eat = ft_atoi(av[3]);
-	ph.sleep = ft_atoi(av[4]);
-	if (ac == 6)
-		ph.times = ft_atoi(av[5]);
-	init(&ph);
-	sleep(1);
+	if (ac != 5 && ac != 6)
+		return (ft_write("wrong number of arguments", 2), 1);
+	if (valid(av))
+		return (1);
+	init(ph, init_state(&state, av, ph));
+	init_threads(&monitor, &state);
 }

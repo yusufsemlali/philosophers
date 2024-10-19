@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ysemlali <ysemlali@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/15 12:23:01 by ysemlali          #+#    #+#             */
+/*   Updated: 2024/10/15 12:23:01 by ysemlali         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philo.h"
 
@@ -29,27 +40,20 @@ long	ft_atoi(const char *str)
 	return (output * sign);
 }
 
-int	error(int err, int type)
-{
-	if (err != 0)
-	{
-		if (type == 1)
-			return (printf("thread creation error\n"), 1);
-		else if (type == 2)
-			return (printf("thread join error\n"), 1);
-		else if (type == 3)
-			return (printf("thread died\n"), 1);
-		else if (type == 4)
-                        exit(0);
-		else if (type == 5)
-			return (printf("done sleeping\n"), 1);
-	}
-	return (0);
-}
-
-long long	ft_time(void)
+size_t	ft_time(void)
 {
 	struct timeval	tv;
-	gettimeofday(&tv, NULL);
-	return (tv.tv_sec * 1000LL) + (tv.tv_usec / 1000);
+
+	if (gettimeofday(&tv, NULL) == -1)
+		ft_write("gettimeofday() failed", 2);
+	return ((tv.tv_sec * 1000LL) + (tv.tv_usec / 1000));
+}
+
+void	ft_usleep(size_t sleep)
+{
+	size_t	start;
+
+	start = ft_time();
+	while ((ft_time() - start) < sleep)
+		usleep(500);
 }
