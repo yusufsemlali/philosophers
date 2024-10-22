@@ -23,31 +23,47 @@ int	ft_isalnum(char *s)
 	return (0);
 }
 
-int	valid(char **av)
+int	valid(int ac, char **av)
 {
-	if (ft_atoi(av[1]) <= 0 || ft_atoi(av[1]) > MAX_PH || ft_isalnum(av[1]))
-		return (ft_write("number of philosophers is invalid", 2), 1);
-	if (ft_atoi(av[2]) <= 0 || ft_isalnum(av[2]))
-		return (ft_write("time to die is invalid", 2), 1);
-	if (ft_atoi(av[3]) <= 0 || ft_isalnum(av[3]))
-		return (ft_write("time to eat is invalid", 2), 1);
-	if (ft_atoi(av[4]) <= 0 || ft_isalnum(av[4]))
-		return (ft_write("time to sleep is invalid", 2), 1);
-	if (av[5] && (ft_atoi(av[5]) < 0 || ft_isalnum(av[5])))
-		return (ft_write("number of meals is invalid", 2), 1);
-	return (0);
+	int	i;
+
+	if (ac != 5 && ac != 6)
+		return (0);
+	i = 1;
+	while (i < ac)
+	{
+		if (i == 1 && ft_atoi(av[i]) > MAXPHILO)
+			return (0);
+		if (ft_atoi(av[i]) <= 0 || ft_isalnum(av[i]))
+			return (0);
+		i++;
+	}
+	return (1);
 }
 
 int	main(int ac, char **av)
 {
-	t_ph		ph[200];
+	int			i;
 	t_state		state;
-	pthread_t	monitor;
+	pthread_t	monitor_thread;
 
-	if (ac != 5 && ac != 6)
-		return (ft_write("wrong number of arguments", 2), 1);
-	if (valid(av))
-		return (1);
-	init(ph, init_state(&state, av, ph));
-	init_threads(&monitor, &state);
+	i = 0;
+	if (!valid(ac, av))
+		return (printf("Invalid Input\n"), 1);
+	init_state(&state, av, 0);
+	init_philos(&state, 0);
+	while (i < state.philocount)
+	{
+		error(pthread_create(&state.philos[i].thread, NULL, philo_routine,
+				&state.philos[i]), "Thread Create Error");
+		i++;
+	}
+	error(pthread_create(&monitor_thread, NULL, monitor_routine, &state),
+		"Thread Create Error");
+	i = 0;
+	while (i < state.philocount)
+		error(pthread_join(state.philos[i++].thread, NULL),
+			"Thread Join Error");
+	error(pthread_join(monitor_thread, NULL), "Thread Join Error");
+	return (0);
 }

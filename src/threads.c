@@ -12,34 +12,59 @@
 
 #include "philo.h"
 
-void	*run(void *p)
+void	*philo_routine(void *arg)
 {
-	t_ph	*ph;
+	t_philo	*philo;
+	t_state	*state;
 
-	ph = (t_ph *)p;
-	if (ph->i % 2 == 0)
-		ft_usleep(1);
-	while (1)
-		if (cycle(ph))
-			break ;
-	return (p);
+	philo = (t_philo *)arg;
+	state = philo->state;
+	if (philo->id % 2 == 0)
+		custom_sleep(1);
+	while (!state->someone_died && !state->finished)
+	{
+		pthread_mutex_lock(philo->leftfork);
+		print_status(philo, "has taken a fork");
+		pthread_mutex_lock(philo->rightfork);
+		print_status(philo, "has taken a fork");
+		print_status(philo, "is eating");
+		philo->lastmeal = get_time();
+		custom_sleep(state->timeto_eat);
+		philo->eatcount++;
+		pthread_mutex_unlock(philo->leftfork);
+		pthread_mutex_unlock(philo->rightfork);
+		print_status(philo, "is sleeping");
+		custom_sleep(state->timeto_sleep);
+		print_status(philo, "is thinking");
+	}
+	return (NULL);
 }
 
-void	init_threads(pthread_t *monitor, t_state *s)
+void	*monitor_routine(void *arg)
 {
-	int	i;
+	t_state	*s;
+	int		i;
 
-	i = 0;
-	if (error(pthread_create(monitor, NULL, &observe, s), 1, s))
-		return ;
-	while (i < s->n)
+	s = (t_state *)arg;
+	while (!s->someone_died && !s->finished)
 	{
-		if (error(pthread_create(&s->ph[i].p, NULL, &run, &s->ph[i]), 1, s))
-			return ;
-		i++;
+		i = 0;
+		while (i < s->philocount)
+		{
+			if (get_time() - s->philos[i].lastmeal > (size_t)s->timeto_die)
+			{
+				print_status(&s->philos[i], "died");
+				s->someone_died = 1;
+				return (NULL);
+			}
+			if (s->musteat != -1
+				&& s->philos[i].eatcount >= s->musteat)
+				s->finished++;
+			i++;
+		}
+		if (s->finished == s->philocount)
+			return (NULL);
+		custom_sleep(1);
 	}
-	i = 0;
-	while (i < s->n)
-		if (error(pthread_join(s->ph[i++].p, NULL), 2, s))
-			return ;
+	return (NULL);
 }

@@ -12,50 +12,31 @@
 
 #include "philo.h"
 
-t_state	*init_state(t_state *state, char **av, t_ph *ph)
+void	init_state(t_state *state, char **av, int i)
 {
-	int	i;
-
-	i = 0;
-	state->ph = ph;
-	state->n = ft_atoi(av[1]);
-	state->die = ft_atoi(av[2]);
-	state->eat = ft_atoi(av[3]);
-	state->sleep = ft_atoi(av[4]);
-	state->meals = -1;
-	if (av[5])
-		state->meals = ft_atoi(av[5]);
-	state->death_state = 0;
-	pthread_mutex_init(&state->d, NULL);
-	pthread_mutex_init(&state->w, NULL);
-	pthread_mutex_init(&state->m, NULL);
-	while (i < state->n)
-		pthread_mutex_init(&state->fork[i++], NULL);
-	return (state);
+	state->philocount = ft_atoi(av[1]);
+	state->timeto_die = ft_atoi(av[2]);
+	state->timeto_eat = ft_atoi(av[3]);
+	state->timeto_sleep = ft_atoi(av[4]);
+	state->musteat = ft_atoi(av[5]);
+	state->finished = 0;
+	state->someone_died = 0;
+	state->starttime = get_time();
+	pthread_mutex_init(&state->write, NULL);
+	pthread_mutex_init(&state->meal, NULL);
+	while (i < state->philocount)
+		pthread_mutex_init(&state->forks[i++], NULL);
 }
 
-void	init(t_ph *ph, t_state *state)
+void	init_philos(t_state *state, int i)
 {
-	int	i;
-
-	i = 0;
-	while (i < state->n)
+	while (i < state->philocount)
 	{
-		ph[i].i = i + 1;
-		ph[i].n = state->n;
-		ph[i].die = state->die;
-		ph[i].eat = state->eat;
-		ph[i].sleep = state->sleep;
-		ph[i].meals = state->meals;
-		ph[i].meals_i = 0;
-		ph[i].died = &state->death_state;
-		ph[i].d = &state->d;
-		ph[i].w = &state->w;
-		ph[i].m = &state->m;
-		ph[i].start = ft_time();
-		ph[i].last_m = ft_time();
-		ph[i].fork_r = &state->fork[i];
-		ph[i].fork_l = &state->fork[(i +1)% state->n];
-		i++;
+		state->philos[i].id = i + 1;
+		state->philos[i].eatcount = 0;
+		state->philos[i].lastmeal = state->starttime;
+		state->philos[i].leftfork = &state->forks[i];
+		state->philos[i].rightfork = &state->forks[(i + 1) % state->philocount];
+		state->philos[i++].state = state;
 	}
 }
