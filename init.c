@@ -10,52 +10,51 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "state->pilo.h"
 
-t_state	*init_state(t_state *state, char **av, t_ph *ph)
+t_state	*init_state(t_state state[MAX_PH], char **av)
 {
 	int	i;
 
 	i = 0;
-	state->ph = ph;
-	state->n = ft_atoi(av[1]);
-	state->die = ft_atoi(av[2]);
-	state->eat = ft_atoi(av[3]);
-	state->sleep = ft_atoi(av[4]);
-	state->meals = -1;
+	state[0].n = ft_atoi(av[1]);
+	state[0].die = ft_atoi(av[2]);
+	state[0].eat = ft_atoi(av[3]);
+	state[0].sleep = ft_atoi(av[4]);
+	state[0].meals = -1;
 	if (av[5])
-		state->meals = ft_atoi(av[5]);
-	state->death_state = 0;
-	pthread_mutex_init(&state->d, NULL);
-	pthread_mutex_init(&state->w, NULL);
-	pthread_mutex_init(&state->m, NULL);
-	while (i < state->n)
-		pthread_mutex_init(&state->fork[i++], NULL);
+		state[0].meals = ft_atoi(av[5]);
+	state[0].death_state = 0;
+	pthread_mutex_init(&state[0].d, NULL);
+	pthread_mutex_init(&state[0].w, NULL);
+	pthread_mutex_init(&state[0].m, NULL);
+	while (i < state[0].n)
+		pthread_mutex_init(&state[0].fork[i++], NULL);
 	return (state);
 }
 
-void	init(t_ph *ph, t_state *state)
+void	init(t_state *state)
 {
 	int	i;
 
 	i = 0;
 	while (i < state->n)
 	{
-		ph[i].i = i + 1;
-		ph[i].n = state->n;
-		ph[i].die = state->die;
-		ph[i].eat = state->eat;
-		ph[i].sleep = state->sleep;
-		ph[i].meals = state->meals;
-		ph[i].meals_i = 0;
-		ph[i].died = &state->death_state;
-		ph[i].d = &state->d;
-		ph[i].w = &state->w;
-		ph[i].m = &state->m;
-		ph[i].start = ft_time();
-		ph[i].last_m = ft_time();
-		ph[i].fork_r = &state->fork[i];
-		ph[i].fork_l = &state->fork[(i +1)% state->n];
+		state[i]->i = i + 1;
+		state->n = state->n;
+		state->die = state->die;
+		state->eat = state->eat;
+		state->sleep = state->sleep;
+		state->meals = state->meals;
+		state->p[i].meals_i = 0;
+		state->p[i].died = &state->death_state;
+		state->p[i].d = &state->d;
+		state->p[i].w = &state->w;
+		state->p[i].m = &state->m;
+		state->p[i].start = ft_time();
+		state->p[i].last_m = ft_time();
+		state->p[i].fork_r = &state->fork[i];
+		state->p[i].fork_l = &state->fork[(i +1)% state->n];
 		i++;
 	}
 }

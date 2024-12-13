@@ -24,57 +24,47 @@
 # define SIZE 1024
 # define MAX_PH 200
 
-typedef struct s_ph
-{
-	pthread_t		p;
-	size_t			eat;
-	size_t			die;
-	size_t			sleep;
-	size_t			times;
-	size_t			start;
-	int				meals;
-	size_t			last_m;
-	size_t			eating;
-	int				meals_i;
-	int				*died;
-	int				n;
-	int				i;
-	pthread_mutex_t	*fork_l;
-	pthread_mutex_t	*fork_r;
-	pthread_mutex_t	*w;
-	pthread_mutex_t	*d;
-	pthread_mutex_t	*m;
-}					t_ph;
-
 typedef struct s_state
 {
-	t_ph			*ph;
+	pthread_t		p;
 	int				n;
 	int				die;
 	int				eat;
 	int				sleep;
 	int				death_state;
 	int				meals;
-	pthread_mutex_t	d;
-	pthread_mutex_t	w;
-	pthread_mutex_t	m;
-	pthread_mutex_t	fork[200];
+	int				meals_i;
+	pthread_mutex_t	d_t;
+	pthread_mutex_t	w_t;
+	pthread_mutex_t	m_t;
+	pthread_mutex_t	fork;
+	size_t			times;
+	size_t			start;
+	size_t			last_m;
+	size_t			eating;
+	int				*died;
+	int				i;
+	pthread_mutex_t	*fork_l;
+	pthread_mutex_t	*fork_r;
+	pthread_mutex_t	*w;
+	pthread_mutex_t	*d;
+	pthread_mutex_t	*m;
 
 }					t_state;
 
 // init
-void				init(t_ph *ph, t_state *state);
-t_state				*init_state(t_state *state, char **av, t_ph *ph);
-void				init_fork(pthread_mutex_t *fork, int n);
-void				init_threads(pthread_t *monitor, t_state *state);
-
-// threads
-void				*observe(void *p);
-int					cycle(t_ph *ph);
-void				*run(void *p);
-void				message(t_ph *ph, char *message);
-
-// utils
+void				init(t_state *state);
+t_state				*init_state(t_state *state, char **av);
+/*void				init_fork(pthread_mutex_t *fork, int n);*/
+/*void				init_threads(pthread_t *monitor, t_state *state);*/
+/**/
+/*// threads*/
+/*void				*observe(void *p);*/
+/*int					cycle(t_ph *ph);*/
+/*void				*run(void *p);*/
+/*void				message(t_ph *ph, char *message);*/
+/**/
+/*// utils*/
 size_t				ft_time(void);
 void				ft_write(char *s, int fd);
 void				ft_usleep(size_t sleep);
