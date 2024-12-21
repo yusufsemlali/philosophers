@@ -82,5 +82,6 @@ long				ft_atoi(const char *str);
 int					error(int err, int type, t_state *state);
 void				lock(pthread_mutex_t *mutex);
 void				unlock(pthread_mutex_t *mutex);
+void        ft_exit(t_state *state);
 
 #endif
