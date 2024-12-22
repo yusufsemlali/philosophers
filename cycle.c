@@ -15,6 +15,7 @@
 int	alive(t_ph *ph)
 {
 	lock(ph->d);
+  printf("%d ", *ph->died);
 	if (*ph->died)
 		return (unlock(ph->d), 0);
 	unlock(ph->d);
@@ -26,7 +27,7 @@ void	message(t_ph *ph, char *m)
 	lock(ph->w);
 	if (alive(ph))
 	{
-		printf("%s[%zu ⏱️ ] %s[🪪 %d] %s%s %s\n", GREEN, ft_time() - ph->start,
+		printf("%s[%zu ⏱️ ] %s[💳 %d] %s%s %s\n", GREEN, ft_time() - ph->start,
 			CYAN, ph->i, YELLOW, m, RESET);
 	}
 	unlock(ph->w);
@@ -34,23 +35,29 @@ void	message(t_ph *ph, char *m)
 
 void	*eat(t_ph *ph)
 {
+	if (ph->i % 2 == 0)
+	{
+		lock(ph->fork_l);
+		message(ph, "has taken a fork");
+		lock(ph->fork_r);
+		message(ph, "has taken a fork");
+	}
+	else
 	{
 		lock(ph->fork_r);
 		message(ph, "has taken a fork");
 		lock(ph->fork_l);
 		message(ph, "has taken a fork");
-		message(ph, "is eating");
-		ft_usleep(ph->eat);
-		unlock(ph->fork_r);
-		unlock(ph->fork_l);
 	}
-  {
-    lock(ph->m);
-    ph->last_m = ft_time();
-    ph->meals_i++;
-    unlock(ph->m);
-	}
-  return (NULL);
+	message(ph, "is eating");
+	ft_usleep(ph->eat);
+	unlock(ph->fork_r);
+	unlock(ph->fork_l);
+	lock(ph->m);
+	ph->last_m = ft_time();
+	ph->meals_i++;
+	unlock(ph->m);
+	return (NULL);
 }
 
 void	*cycle(void *p)
@@ -59,7 +66,7 @@ void	*cycle(void *p)
 
 	ph = (t_ph *)p;
 	if (ph->i % 2 == 0)
-		ft_usleep(10);
+		ft_usleep(ph->sleep - 10);
 	if (ph->n == 1)
 	{
 		lock(ph->fork_l);
@@ -68,10 +75,13 @@ void	*cycle(void *p)
 	}
 	while (alive(ph))
 	{
-    eat(ph);
+		eat(ph);
 		message(ph, "is sleeping");
 		ft_usleep(ph->sleep);
-		message(ph, "is thinking");
+    {
+      message(ph, "is thinking");
+      ft_usleep(5);
+    }
 	}
 	return (p);
 }

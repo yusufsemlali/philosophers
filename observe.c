@@ -58,9 +58,9 @@ void	*observe(void *p)
 		while (i < s->n)
 		{
 			if (died(&s->ph[i]))
-				return (printf("\n%s%s[%i died 🪦] %s\n\n", RED, BOLD,
-						s->ph[i].i, RESET), lock(s->ph[i].d),
-					*s->ph[i].died = 1, unlock(s->ph[i].d), exit(1), NULL);
+				return (printf("%s%s[%i died 💳] %s\n", RED, BOLD, s->ph[i].i,
+						RESET), lock(s->ph[i].d), s->death_state = 1,
+					unlock(s->ph[i].d), exit(1), NULL);
 			if (running(s))
 				return (lock(s->ph[i].d), *s->ph[i].died = 1,
 					unlock(s->ph[i].d), NULL);
