@@ -61,7 +61,7 @@ void	*observe(void *p)
 		{
 			if (died(&s->ph[i]))
 				return (message(&s->ph[i], "died"), lock(s->ph[i].d),
-					*s->ph[i].died = 1, unlock(s->ph[i].d), ft_exit(s), NULL);
+					*s->ph[i].died = 1, unlock(s->ph[i].d), NULL);
 			if (running(s))
 				return (lock(s->ph[i].d), *s->ph[i].died = 1,
 					unlock(s->ph[i].d), NULL);
