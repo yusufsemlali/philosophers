@@ -37,20 +37,20 @@ void	*eat(t_ph *ph)
 		return (ft_usleep(ph->die), unlock(ph->fork_r), NULL);
 	lock(ph->fork_r);
 	message(ph, "has taken a fork");
-	lock(ph->m);
-	ph->last_m = ft_time();
 	ph->eating = 1;
-	unlock(ph->m);
 	message(ph, "is eating");
 	lock(ph->m);
 	ph->meals_i++;
 	unlock(ph->m);
 	ft_usleep(ph->eat);
+	ph->last_m = ft_time();
 	return (ph->eating = 0, unlock(ph->fork_l), unlock(ph->fork_r), NULL);
 }
 
 int	cycle(t_ph *ph)
 {
+	if(ph->i % 2 == 0)
+		ft_usleep(ph->sleep -10);
 	if (alive(ph))
 		return (1);
 	eat(ph);
