@@ -26,6 +26,7 @@ t_state	*init_state(t_state *state, char **av, t_ph *ph)
 	if (av[5])
 		state->meals = ft_atoi(av[5]);
 	state->death_state = 0;
+	state->start = ft_time();
 	pthread_mutex_init(&state->d, NULL);
 	pthread_mutex_init(&state->w, NULL);
 	pthread_mutex_init(&state->m, NULL);
@@ -47,15 +48,15 @@ void	init(t_ph *ph, t_state *state)
 		ph[i].eat = state->eat;
 		ph[i].sleep = state->sleep;
 		ph[i].meals = state->meals;
-		ph[i].meals_i = 0;
+		ph[i].last_m = state->start;
+		ph[i].start = state->start;
 		ph[i].died = &state->death_state;
 		ph[i].d = &state->d;
 		ph[i].w = &state->w;
 		ph[i].m = &state->m;
-		ph[i].start = ft_time();
-		ph[i].last_m = ft_time();
+		ph[i].start_m = &state->start_m;
 		ph[i].fork_r = &state->fork[i];
-		ph[i].fork_l = &state->fork[(i +1)% state->n];
+		ph[i].fork_l = &state->fork[(i + 1) % state->n];
 		i++;
 	}
 }

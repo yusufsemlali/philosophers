@@ -24,18 +24,24 @@
 # define SIZE 1024
 # define MAX_PH 200
 
+/*enum*/
+/*{*/
+/*	THINKING,*/
+/*	SLEEPING,*/
+/*	EATING*/
+/*}					e_mode;*/
+/**/
 typedef struct s_ph
 {
 	pthread_t		p;
 	size_t			eat;
 	size_t			die;
 	size_t			sleep;
+	size_t			last_m;
+	size_t			eating;
 	size_t			times;
 	size_t			start;
 	int				meals;
-	size_t			last_m;
-	size_t			eating;
-	int				meals_i;
 	int				*died;
 	int				n;
 	int				i;
@@ -44,6 +50,8 @@ typedef struct s_ph
 	pthread_mutex_t	*w;
 	pthread_mutex_t	*d;
 	pthread_mutex_t	*m;
+	pthread_mutex_t	*start_m;
+
 }					t_ph;
 
 typedef struct s_state
@@ -55,6 +63,8 @@ typedef struct s_state
 	int				sleep;
 	int				death_state;
 	int				meals;
+	size_t			start;
+	pthread_mutex_t	start_m;
 	pthread_mutex_t	d;
 	pthread_mutex_t	w;
 	pthread_mutex_t	m;
@@ -66,13 +76,14 @@ typedef struct s_state
 void				init(t_ph *ph, t_state *state);
 t_state				*init_state(t_state *state, char **av, t_ph *ph);
 void				init_fork(pthread_mutex_t *fork, int n);
-void				init_threads(pthread_t *monitor, t_state *state);
+void				init_threads(pthread_t *monitor, t_state *s);
 
 // threads
 void				*observe(void *p);
 int					cycle(t_ph *ph);
 void				*run(void *p);
 void				message(t_ph *ph, char *message);
+int					alive(t_ph *ph);
 
 // utils
 size_t				ft_time(void);
@@ -82,6 +93,6 @@ long				ft_atoi(const char *str);
 int					error(int err, int type, t_state *state);
 void				lock(pthread_mutex_t *mutex);
 void				unlock(pthread_mutex_t *mutex);
-void        ft_exit(t_state *state);
+void				ft_exit(t_state *state);
 
 #endif

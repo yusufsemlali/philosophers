@@ -16,7 +16,7 @@ int	ft_isalnum(char *s)
 {
 	while (*s)
 	{
-		if (*s < '0' && *s > '9')
+		if (*s < '0' || *s > '9')
 			return (1);
 		s++;
 	}
@@ -37,6 +37,7 @@ int	valid(char **av)
 		return (ft_write("number of meals is invalid", 2), 1);
 	return (0);
 }
+
 
 int	main(int ac, char **av)
 {
