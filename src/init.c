@@ -50,7 +50,7 @@ void	init(t_ph *ph, t_state *state)
 		ph[i].sleep = state->sleep;
 		ph[i].meals = state->meals;
 		ph[i].last_m = state->start;
-		ph[i].start = state->start;
+		ph[i].start = ft_time();
 		ph[i].died = &state->death_state;
 		ph[i].d = &state->d;
 		ph[i].w = &state->w;

@@ -24,16 +24,16 @@ void	take_forks(t_ph *ph)
 {
 	if (ph->i % 2 == 0)
 	{
-		lock(ph->fork_l);
-		message(ph, "has taken a fork");
 		lock(ph->fork_r);
+		message(ph, "has taken a fork");
+		lock(ph->fork_l);
 		message(ph, "has taken a fork");
 	}
 	else
 	{
-		lock(ph->fork_r);
-		message(ph, "has taken a fork");
 		lock(ph->fork_l);
+		message(ph, "has taken a fork");
+		lock(ph->fork_r);
 		message(ph, "has taken a fork");
 	}
 }
@@ -61,5 +61,6 @@ int	cycle(t_ph *ph)
 	message(ph, "is sleeping");
 	usleep(ph->sleep * 1000);
 	message(ph, "is thinking");
+	usleep(2000);
 	return (0);
 }

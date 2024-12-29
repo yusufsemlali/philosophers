@@ -46,8 +46,12 @@ void	*run(void *p)
 	if (ph->n == 1)
 		return (lock(ph->fork_r), message(ph, "has taken a fork"),
 			usleep(ph->eat * 1000), NULL);
-	while (!alive(ph) && !(done(ph)))
+	while (1)
+	{
 		cycle(ph);
+		if (alive(ph) || (done(ph)))
+			break ;
+	}
 	return (p);
 }
 
