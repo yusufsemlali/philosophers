@@ -15,10 +15,11 @@
 void	destroy(t_state *state)
 {
 	pthread_mutex_destroy(&state->w);
-	pthread_mutex_destroy(&state->m);
 	pthread_mutex_destroy(&state->d);
 	while (state->n--)
 		pthread_mutex_destroy(&state->fork[state->n]);
+	while (state->n--)
+		pthread_mutex_destroy(&state->m[state->n]);
 }
 
 int	error(int err, int type, t_state *state)

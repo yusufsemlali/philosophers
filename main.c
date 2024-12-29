@@ -42,12 +42,15 @@ int	main(int ac, char **av)
 {
 	t_ph		ph[200];
 	t_state		state;
-	pthread_t	monitor;
+	pthread_t	death_monitor;
+	pthread_t	meals_monitor;
 
 	if (ac != 5 && ac != 6)
 		return (ft_write("wrong number of arguments", 2), 1);
 	if (valid(av))
 		return (1);
 	init(ph, init_state(&state, av, ph));
-	init_threads(&monitor, &state);
+	init_threads(&state);
+	init_observers(&death_monitor, &meals_monitor, &state);
+    printf("meals \n");
 }

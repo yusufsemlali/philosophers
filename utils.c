@@ -52,23 +52,23 @@ size_t	ft_time(void)
 void	ft_usleep(size_t sleep_time)
 {
 	size_t	start;
-	size_t	elapsed;
-	size_t	remain;
 
 	start = ft_time();
 	while (1)
 	{
-		elapsed = ft_time() - start;
-		if (elapsed >= sleep_time)
+		if (ft_time() - start >= sleep_time)
 			break ;
-		remain = sleep_time - elapsed;
-		if (remain > 1000)
-			usleep(1000);
-		else if (remain > 100)
-			usleep(100);
-		else if (remain > 50)
-			usleep(50);
-		else
-			usleep(10);
+		usleep(1000);
 	}
+}
+
+void	message(t_ph *ph, char *m)
+{
+	lock(ph->w);
+	if (alive(ph))
+	{
+		printf("%s[ %zu ⏱️  ] %s [🪪  %d] %s%s %s\n", GREEN, ft_time()
+			- ph->start, CYAN, ph->i, YELLOW, m, RESET);
+	}
+	unlock(ph->w);
 }

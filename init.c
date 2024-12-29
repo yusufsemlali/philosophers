@@ -29,9 +29,11 @@ t_state	*init_state(t_state *state, char **av, t_ph *ph)
 	state->death_state = 0;
 	pthread_mutex_init(&state->d, NULL);
 	pthread_mutex_init(&state->w, NULL);
-	pthread_mutex_init(&state->m, NULL);
 	while (i < state->n)
 		pthread_mutex_init(&state->fork[i++], NULL);
+	i = 0;
+	while (i < state->n)
+		pthread_mutex_init(&state->m[i++], NULL);
 	return (state);
 }
 
@@ -40,9 +42,7 @@ void	init(t_ph *ph, t_state *state)
 	int	i;
 
 	i = 0;
-	while (i < state->n)
-	{
-		ph[i].i = i + 1;
+	while (i < state->n) { ph[i].i = i + 1;
 		ph[i].n = state->n;
 		ph[i].die = state->die;
 		ph[i].eat = state->eat;
@@ -52,7 +52,7 @@ void	init(t_ph *ph, t_state *state)
 		ph[i].died = &state->death_state;
 		ph[i].d = &state->d;
 		ph[i].w = &state->w;
-		ph[i].m = &state->m;
+		ph[i].m = &state->m[i];
 		ph[i].start = state->start;
 		ph[i].last_m = state->start;
 		ph[i].fork_r = &state->fork[i];

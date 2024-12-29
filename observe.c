@@ -12,29 +12,25 @@
 
 #include "philo.h"
 
-int	running(t_state *s)
+int	meals(t_state *s)
 {
 	int	finished;
 	int	i;
 
 	finished = 0;
 	i = 0;
+	printf("hello world\n");
 	if (s->meals == -1)
 		return (0);
 	while (i < s->n)
 	{
 		lock(s->ph[i].m);
 		if (s->ph[i].meals_i >= s->meals)
-		{
-			printf("meals are not %i %i", finished, s->n);
 			finished++;
-		}
 		unlock(s->ph[i].m);
 	}
 	if (finished == s->n)
-	{
-		return (lock(s->ph[0].m), s->ph[0].died = 0, unlock(s->ph[0].m), 1);
-	}
+		return (lock(&s->d), s->death_state = 1, unlock(&s->d), 1);
 	return (0);
 }
 
@@ -46,7 +42,7 @@ int	died(t_ph *ph)
 	return (unlock(ph->m), 0);
 }
 
-void	*observe(void *p)
+void	*observer_d(void *p)
 {
 	t_state	*s;
 	int		i;
@@ -58,12 +54,36 @@ void	*observe(void *p)
 		while (i < s->n)
 		{
 			if (died(&s->ph[i]))
-				return (printf("%s%s[%i died 💳] %s\n", RED, BOLD, s->ph[i].i,
-						RESET), lock(s->ph[i].d), s->death_state = 1,
-					unlock(s->ph[i].d), exit(1), NULL);
-			if (running(s))
-				return (lock(s->ph[i].d), *s->ph[i].died = 1,
-					unlock(s->ph[i].d), NULL);
+			{
+				lock(s->ph[i].d);
+				s->death_state = 1;
+				printf("%s%s[ 🪪 %i died ] %s\n", YELLOW, BOLD, s->ph[i].i,
+					RESET);
+				unlock(s->ph[i].d);
+				return (NULL);
+			}
+			usleep(1000);
+			i++;
+		}
+	}
+	return (p);
+}
+
+void	*observer_m(void *p)
+{
+	t_state	*s;
+	int		i;
+
+	s = (t_state *)p;
+	while (1)
+	{
+		printf("hello world\n");
+		i = 0;
+		while (i < s->n)
+		{
+			if (meals(s))
+				return (NULL);
+			usleep(1000);
 			i++;
 		}
 	}

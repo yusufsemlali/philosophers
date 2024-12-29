@@ -65,7 +65,7 @@ typedef struct s_state
 	size_t			start;
 	pthread_mutex_t	d;
 	pthread_mutex_t	w;
-	pthread_mutex_t	m;
+	pthread_mutex_t	m[200];
 	pthread_mutex_t	fork[200];
 
 }					t_state;
@@ -74,12 +74,15 @@ typedef struct s_state
 void				init(t_ph *ph, t_state *state);
 t_state				*init_state(t_state *state, char **av, t_ph *ph);
 void				init_fork(pthread_mutex_t *fork, int n);
-void				init_threads(pthread_t *monitor, t_state *state);
+void	init_threads(t_state *s);
+void	init_observers(pthread_t *death, pthread_t *meals, t_state *s);
 
 // threads
-void				*observe(void *p);
+void	*observer_d(void *p);
+void	*observer_m(void *p);
 void				*cycle(void *p);
-void				messagd(t_ph *ph, char *message);
+void				message(t_ph *ph, char *m);
+int					alive(t_ph *ph);
 
 // utils
 size_t				ft_time(void);
