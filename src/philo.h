@@ -24,13 +24,6 @@
 # define SIZE 1024
 # define MAX_PH 200
 
-/*enum*/
-/*{*/
-/*	THINKING,*/
-/*	SLEEPING,*/
-/*	EATING*/
-/*}					e_mode;*/
-/**/
 typedef struct s_ph
 {
 	pthread_t		p;
@@ -45,6 +38,8 @@ typedef struct s_ph
 	int				*died;
 	int				n;
 	int				i;
+	int				done;
+	int				*s_done;
 	pthread_mutex_t	*fork_l;
 	pthread_mutex_t	*fork_r;
 	pthread_mutex_t	*w;
@@ -63,7 +58,9 @@ typedef struct s_state
 	int				sleep;
 	int				death_state;
 	int				meals;
+	int				ready;
 	size_t			start;
+	int				s_done;
 	pthread_mutex_t	start_m;
 	pthread_mutex_t	d;
 	pthread_mutex_t	w;

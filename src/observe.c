@@ -15,9 +15,17 @@
 int	died(t_ph *ph)
 {
 	lock(ph->m);
-	if (ft_time() - ph->last_m > ph->die && ph->eating == 0)
+	if (ph->done == 0 && ft_time() - ph->last_m > ph->die && ph->eating == 0)
 		return (unlock(ph->m), 1);
 	return (unlock(ph->m), 0);
+}
+
+int	complete(t_state *state)
+{
+	lock(&state->m);
+	if (state->s_done == state->n)
+		return (unlock(&state->m), 1);
+	return (unlock(&state->m), 0);
 }
 
 void	*observe(void *p)
@@ -31,9 +39,11 @@ void	*observe(void *p)
 		i = 0;
 		while (i < s->n)
 		{
-			if (died(&s->ph[i]) && s->ph[i].i % 2 != 0)
+			if (died(&s->ph[i]))
 				return (message(&s->ph[i], "died"), lock(s->ph[i].d),
-					*s->ph[i].died = 1, unlock(s->ph[i].d), NULL);
+					*s->ph[i].died = 1, unlock(s->ph[i].d), p);
+			if (complete(s))
+				return (p);
 			usleep(1000);
 			i++;
 		}

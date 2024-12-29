@@ -1,5 +1,5 @@
 CC = cc
-FLAGS = -Wall -Wextra -Werror -ggdb -fsanitize=address -pthread
+FLAGS = -Wall -Wextra -Werror -ggdb -pthread #-fsanitize=thread 
 SRC = src/main.c src/utils.c src/init.c src/extra_utils.c src/threads.c src/observe.c src/cycle.c 
 			#    ft_lstnew.c ft_lstadd_front.c ft_lstsize.c ft_lstlast.c \
 			#    ft_lstclear.c ft_lstadd_back.c ft_lstdelone.c ft_del.c ft_dellast.c \

@@ -23,10 +23,17 @@ int	alive(t_ph *ph)
 
 int	done(t_ph *ph)
 {
-	if (ph->meals != -1)
-		if (ph->times >= (size_t)ph->meals)
-			return (1);
-	return (0);
+	if (ph->meals == -1)
+		return (0);
+	lock(ph->m);
+	if (ph->times >= (size_t)ph->meals)
+	{
+		*ph->s_done += 1;
+		ph->done = 1;
+		unlock(ph->m);
+		return (1);
+	}
+	return (unlock(ph->m), 0);
 }
 
 void	*run(void *p)
@@ -36,6 +43,9 @@ void	*run(void *p)
 	ph = (t_ph *)p;
 	if (ph->i % 2 == 0)
 		usleep((ph->eat * 1000));
+	if (ph->n == 1)
+		return (lock(ph->fork_r), message(ph, "has taken a fork"),
+			usleep(ph->eat * 1000), NULL);
 	while (!alive(ph) && !(done(ph)))
 		cycle(ph);
 	return (p);
@@ -46,16 +56,19 @@ void	init_threads(pthread_t *monitor, t_state *s)
 	int	i;
 
 	i = 0;
+	(void)monitor;
+	if (error(pthread_create(monitor, NULL, &observe, s), 1, s))
+		return ;
 	while (i < s->n)
 	{
 		if (error(pthread_create(&s->ph[i].p, NULL, &run, &s->ph[i]), 1, s))
 			return ;
 		i++;
 	}
-	if (error(pthread_create(monitor, NULL, &observe, s), 1, s))
-		return ;
 	i = 0;
 	while (i < s->n)
 		if (error(pthread_join(s->ph[i++].p, NULL), 2, s))
 			return ;
+	if (error(pthread_join(*monitor, NULL), 2, s))
+		return ;
 }
